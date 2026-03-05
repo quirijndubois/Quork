@@ -209,7 +209,7 @@ struct State {
 }
 
 impl State {
-    async fn new(display: OwnedDisplayHandle, window: Arc<Window>) -> State {
+    async fn new(_display: OwnedDisplayHandle, window: Arc<Window>) -> State {
         let instance_desc = wgpu::InstanceDescriptor::default();
         let instance = wgpu::Instance::new(&instance_desc);
         let adapter = instance
@@ -399,7 +399,7 @@ impl State {
                 resolve_target: None,
                 ops: wgpu::Operations {
                     load: wgpu::LoadOp::Clear(wgpu::Color {
-                        r: 1.0,
+                        r: 0.0,
                         g: 0.0,
                         b: 0.0,
                         a: 0.0,
@@ -503,11 +503,8 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 state.handle_key(event_loop, code, key_state.is_pressed());
-                dbg!(code, key_state);
             }
-            _ => {
-                dbg!(event);
-            }
+            _ => {}
         }
     }
 }

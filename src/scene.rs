@@ -7,6 +7,6 @@ pub struct Scene {
 }
 
 pub fn load_scene(path: &str) -> Scene {
-    let (vertices, indices) = obj_parser::load_obj(path);
+    let (vertices, indices) = obj_parser::load_obj(path, false);
     Scene { vertices, indices }
 }

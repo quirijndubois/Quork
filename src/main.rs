@@ -1,7 +1,10 @@
 mod camera;
+mod obj_parser;
+mod scene;
 mod state;
 mod vertex;
 
+use scene::Scene;
 use state::State;
 use std::sync::Arc;
 use winit::{
@@ -13,9 +16,11 @@ use winit::{
     window::{Window, WindowId},
 };
 
-#[derive(Default)]
+const OBJ_PATH: &str = "assets/monkey.obj";
+
 struct App {
     state: Option<State>,
+    scene: Scene,
 }
 
 impl ApplicationHandler for App {
@@ -29,6 +34,7 @@ impl ApplicationHandler for App {
         let state = pollster::block_on(State::new(
             event_loop.owned_display_handle(),
             window.clone(),
+            &self.scene,
         ));
         self.state = Some(state);
 
@@ -68,9 +74,14 @@ impl ApplicationHandler for App {
 fn main() {
     env_logger::init();
 
+    let current_scene = scene::load_scene(OBJ_PATH);
+
     let event_loop = EventLoop::new().unwrap();
     event_loop.set_control_flow(ControlFlow::Poll);
 
-    let mut app = App::default();
+    let mut app = App {
+        state: None,
+        scene: current_scene,
+    };
     event_loop.run_app(&mut app).unwrap();
 }

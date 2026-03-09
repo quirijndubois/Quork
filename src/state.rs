@@ -3,7 +3,8 @@ use wgpu::util::DeviceExt;
 use winit::{event_loop::ActiveEventLoop, keyboard::KeyCode, window::Window};
 
 use crate::camera::{Camera, CameraController, CameraUniform};
-use crate::vertex::{INDICES, VERTICES, Vertex};
+use crate::scene::Scene;
+use crate::vertex::Vertex;
 
 pub struct State {
     pub window: Arc<Window>,
@@ -27,6 +28,7 @@ impl State {
     pub async fn new(
         _display: winit::event_loop::OwnedDisplayHandle,
         window: Arc<Window>,
+        scene: &Scene,
     ) -> State {
         let instance_desc = wgpu::InstanceDescriptor::default();
         let instance = wgpu::Instance::new(&instance_desc);
@@ -136,17 +138,17 @@ impl State {
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(VERTICES),
+            contents: bytemuck::cast_slice(scene.vertices.as_slice()),
             usage: wgpu::BufferUsages::VERTEX,
         });
 
         let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Index Buffer"),
-            contents: bytemuck::cast_slice(INDICES),
+            contents: bytemuck::cast_slice(scene.indices.as_slice()),
             usage: wgpu::BufferUsages::INDEX,
         });
 
-        let num_indices = INDICES.len() as u32;
+        let num_indices = scene.indices.len() as u32;
         let camera_controller = CameraController::new(0.2);
 
         let state = State {

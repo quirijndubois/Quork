@@ -27,7 +27,7 @@ impl Vertex {
                     shader_location: 2,
                     format: wgpu::VertexFormat::Float32x3,
                 },
-            ],
+            ][..],
         }
     }
 }

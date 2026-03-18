@@ -62,7 +62,7 @@ impl State {
 
         let camera_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Camera Buffer"),
-            contents: bytemuck::cast_slice(&[camera_uniform]),
+            contents: bytemuck::cast_slice(&[camera_uniform][..]),
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
 
@@ -77,7 +77,7 @@ impl State {
                         min_binding_size: None,
                     },
                     count: None,
-                }],
+                }][..],
                 label: Some("camera_bind_group_layout"),
             });
 
@@ -86,7 +86,7 @@ impl State {
             entries: &[wgpu::BindGroupEntry {
                 binding: 0,
                 resource: camera_buffer.as_entire_binding(),
-            }],
+            }][..],
             label: Some("camera_bind_group"),
         });
 
@@ -94,7 +94,7 @@ impl State {
         let render_pipeline_layout =
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Render Pipeline Layout"),
-                bind_group_layouts: &[&camera_bind_group_layout],
+                bind_group_layouts: &[&camera_bind_group_layout][..],
                 immediate_size: 0,
             });
 
@@ -104,7 +104,7 @@ impl State {
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: Some("vs_main"),
-                buffers: &[Vertex::desc()],
+                buffers: &[Vertex::desc()][..],
                 compilation_options: wgpu::PipelineCompilationOptions::default(),
             },
             fragment: Some(wgpu::FragmentState {
@@ -114,7 +114,7 @@ impl State {
                     format: surface_format,
                     blend: Some(wgpu::BlendState::REPLACE),
                     write_mask: wgpu::ColorWrites::ALL,
-                })],
+                })][..],
                 compilation_options: wgpu::PipelineCompilationOptions::default(),
             }),
             primitive: wgpu::PrimitiveState {
@@ -225,7 +225,7 @@ impl State {
                     }),
                     store: wgpu::StoreOp::Store,
                 },
-            })],
+            })][..],
             depth_stencil_attachment: None,
             timestamp_writes: None,
             occlusion_query_set: None,
@@ -233,7 +233,7 @@ impl State {
         });
 
         renderpass.set_pipeline(&self.render_pipeline);
-        renderpass.set_bind_group(0, &self.camera_bind_group, &[]);
+        renderpass.set_bind_group(0, &self.camera_bind_group, &[][..]);
         renderpass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
         renderpass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
         renderpass.draw_indexed(0..self.num_indices, 0, 0..1);
@@ -249,7 +249,7 @@ impl State {
         self.queue.write_buffer(
             &self.camera_buffer,
             0,
-            bytemuck::cast_slice(&[self.camera_uniform]),
+            bytemuck::cast_slice(&[self.camera_uniform][..]),
         );
     }
 
